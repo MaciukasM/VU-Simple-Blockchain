@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <vector>
+#include <random>
+#include <ctime>
 
 using namespace std;
 
@@ -17,7 +19,7 @@ class User {
     void setVardas(string vardas) { this->vardas = vardas; }
     string getVardas() const { return vardas; }
 
-    void setPk(int pk) { this->pk = pk; }
+    void setPk(string pk) { this->pk = pk; }
     string getPk() const { return pk; }
 
     void setVal(int valiuta) { this->val = valiuta; }
