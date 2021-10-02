@@ -3,7 +3,7 @@
 
 class Block
 {
-    
-}
+
+};
 
 #endif

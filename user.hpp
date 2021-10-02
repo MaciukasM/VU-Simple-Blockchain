@@ -11,7 +11,7 @@ class User {
   private:
     string vardas;
     string pk;
-    int val;
+    double val;
   public:
     User () {}
 
@@ -21,8 +21,8 @@ class User {
     void setPk(string pk) { this->pk = pk; }
     string getPk() const { return pk; }
 
-    void setVal(int valiuta) { this->val = valiuta; }
-    int getVal() const { return val; }
+    void setVal(double valiuta) { this->val = valiuta; }
+    double getVal() const { return val; }
 };
 
 void VartotojuGeneravimas(vector<User> &vartotojai);
