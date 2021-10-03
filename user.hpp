@@ -14,6 +14,7 @@ class User {
     double val;
   public:
     User () {}
+    ~User () {}
 
     void setVardas(string vardas) { this->vardas = vardas; }
     string getVardas() const { return vardas; }

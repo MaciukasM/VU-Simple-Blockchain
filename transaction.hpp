@@ -2,6 +2,7 @@
 #define TRANSACTION_HPP
 
 #include <iostream>
+#include "user.hpp"
 
 using namespace std;
 
@@ -14,6 +15,7 @@ class Transaction
         double val;
     public:
         Transaction() {}
+        ~Transaction() {}
 
         void setSiuntejoPk(string siuntejoPk) { this->siuntejoPk = siuntejoPk; }
         string getSiuntejoPk() const { return siuntejoPk; }
@@ -23,6 +25,11 @@ class Transaction
 
         void setVal(double valiuta) { this->val = valiuta; }
         double getVal() const { return val; }
+
+        void setId(string id) { this->id = id; }
+        string getId() const { return id; }
 };
+
+void TransakcijuGeneravimas(vector<User> vartotojai, vector<Transaction> &transactionPool);
 
 #endif

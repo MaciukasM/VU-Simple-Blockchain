@@ -1,9 +1,18 @@
 #include "user.hpp"
+#include "transaction.hpp"
 
 int main()
 {
     vector<User> vartotojai;
-    VartotojuGeneravimas(vartotojai);
+    vector<Transaction> transactionPool;
 
-    cout<<vartotojai[0].getVardas()<<" "<<vartotojai[0].getPk()<<" "<<vartotojai[0].getVal()<<endl;
+    VartotojuGeneravimas(vartotojai);
+    TransakcijuGeneravimas(vartotojai, transactionPool);
+
+    /* for (int i = 0; i<transactionPool.size(); i++)
+    {
+        cout<<transactionPool[i].getId()<<" "<<transactionPool[i].getSiuntejoPk()<<" "<<transactionPool[i].getGavejoPk()<<" "<<transactionPool[i].getVal()<<" "<<i<<endl;
+    } */
+
+    
 }
