@@ -31,5 +31,6 @@ class Transaction
 };
 
 void TransakcijuGeneravimas(vector<User> vartotojai, vector<Transaction> &transactionPool);
+void TransakcijuParinkimas(vector<Transaction> transactionPool, vector<Transaction> &transactionList, int n);
 
 #endif

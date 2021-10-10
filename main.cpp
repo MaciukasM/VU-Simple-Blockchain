@@ -5,9 +5,12 @@ int main()
 {
     vector<User> vartotojai;
     vector<Transaction> transactionPool;
+    vector<Transaction> transactionList;
 
     VartotojuGeneravimas(vartotojai);
     TransakcijuGeneravimas(vartotojai, transactionPool);
+
+    TransakcijuParinkimas(transactionPool, transactionList, 100); //3 kintamasis nurodo kiek transakciju bus bloke
 
     /* for (int i = 0; i<transactionPool.size(); i++)
     {

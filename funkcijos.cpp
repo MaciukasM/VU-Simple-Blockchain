@@ -44,7 +44,7 @@ void TransakcijuGeneravimas(vector<User> vartotojai, vector<Transaction> &transa
 
         if(u1 != u2)
         {
-            uniform_real_distribution<float> distributionF(1, (vartotojai[u1].getVal()/5)+2); //kol kas vartotojai atsakingi ir neisleidzia daugiau nei penktadalio valiutos :)
+            uniform_real_distribution<float> distributionF(1, (vartotojai[u1].getVal()/5)); //kol kas vartotojai atsakingi ir neisleidzia daugiau nei penktadalio valiutos :)
 
             t.setVal(distributionF(generator));
             t.setSiuntejoPk(vartotojai[u1].getPk());
@@ -54,7 +54,19 @@ void TransakcijuGeneravimas(vector<User> vartotojai, vector<Transaction> &transa
 
             transactionPool.push_back(t);
         }
-    }
+    }   
+}
 
-    
+void TransakcijuParinkimas(vector<Transaction> transactionPool, vector<Transaction> &transactionList, int n)
+{
+    random_device device;
+    mt19937 generator(device());
+    uniform_int_distribution<int> distribution(0, 10000-1);
+
+    for(int i = 0; i<n; i++) // n nurodo kiek transakciju bus paimta
+    {
+        int sk = distribution(generator);
+
+        transactionList.push_back(transactionPool[sk]);
+    }
 }
