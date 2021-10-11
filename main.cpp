@@ -10,11 +10,17 @@ int main()
     VartotojuGeneravimas(vartotojai);
     TransakcijuGeneravimas(vartotojai, transactionPool);
 
-    TransakcijuParinkimas(transactionPool, transactionList, 100); //3 kintamasis nurodo kiek transakciju bus bloke
-
     /* for (int i = 0; i<transactionPool.size(); i++)
     {
         cout<<transactionPool[i].getId()<<" "<<transactionPool[i].getSiuntejoPk()<<" "<<transactionPool[i].getGavejoPk()<<" "<<transactionPool[i].getVal()<<" "<<i<<endl;
+    } */
+
+    TransakcijuParinkimas(transactionPool, transactionList, 128); //3 kintamasis nurodo kiek transakciju bus bloke
+    string merkle = MerkleGeneravimas(transactionList);
+
+    /* for (int i = 0; i<100; i++)
+    {
+        cout<<transactionList[i].getId()<<endl;
     } */
 
     

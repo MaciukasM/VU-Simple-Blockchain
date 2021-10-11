@@ -70,3 +70,33 @@ void TransakcijuParinkimas(vector<Transaction> transactionPool, vector<Transacti
         transactionList.push_back(transactionPool[sk]);
     }
 }
+
+string MerkleGeneravimas(vector<Transaction> transactionList)
+{
+    vector<string> merkle;
+    vector<string> merkle1; //kopija
+
+    // pirma patikrinam ar is viso daugiau nei 1 transactionas yra
+    if(transactionList.size() == 0) return DuomenuHashinimas("");
+    if(transactionList.size() == 1) return DuomenuHashinimas(transactionList[0].getId()); 
+
+    for (int i = 0; i<transactionList.size(); i++)
+    {
+        merkle.push_back(transactionList[i].getId());
+    }
+    
+    merkle1 = merkle;
+
+    while(merkle1.size()>1)
+    {
+        merkle.clear();
+
+        if(merkle1.size() % 2 != 0) merkle1.push_back(merkle1.back());
+
+        for(int i = 0; i<merkle1.size(); i = i + 2) merkle.push_back(DuomenuHashinimas(merkle1[i]+merkle1[i+1]));
+
+        merkle1 = merkle;
+    }
+
+    return merkle1[0];
+}
