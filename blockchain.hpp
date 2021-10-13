@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <ctime>
+#include <string>
 
 using namespace std;
 
@@ -18,6 +19,13 @@ class Block
         string version = "v0.1";
     public:
         Block() {}
+        Block(string pHash, string mHash) 
+        { 
+            this->pHash = pHash; 
+            this->mHash = mHash;
+            
+            timestamp = time(0);
+        }
         Block(string pHash, string mHash, int nonce, string difficulty) 
         { 
             this->pHash = pHash; 
@@ -39,9 +47,11 @@ class Block
         string getVersion() const { return version; }
         string getDifficulty() const { return difficulty; }
 
-        string setHash(string bHash) { this->bHash = bHash; }
+        void setHash(string bHash) { this->bHash = bHash; }
+        void setNonce(int nonce) { this->nonce = nonce; }
+        void setDifficulty(string difficulty) { this->difficulty = difficulty; }
 };
 
-string BlockMining(string merkle, string pHash = "00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048");
+void BlockMining(Block &b);
 
 #endif

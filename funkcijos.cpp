@@ -102,7 +102,7 @@ string MerkleGeneravimas(vector<Transaction> transactionList)
     return merkle1[0];
 }
 
-string BlockMining(string merkle, string pHash)
+void BlockMining(Block &b)
 {
     bool RastasHashas = false;
     int nonce;
@@ -111,16 +111,26 @@ string BlockMining(string merkle, string pHash)
 
     string difficulty = "3-0"; //cia galim pakeisti difficulty - pirmas char'as nurodo kiek 0 turi buti is pradziu hash'e
 
+    random_device device;
+    mt19937 generator(device());
+    uniform_int_distribution<int> distribution(1,100000000);
+
+    cout<<"\nPradedamas mininimas...\n"<<endl;
+
     while(!RastasHashas)
     {
-        random_device device;
-        mt19937 generator(device());
-        uniform_int_distribution<int> distribution(1,10000000);
-
         nonce = distribution(generator);
 
-        Block b(pHash, merkle, nonce, difficulty);
+        //Block b(pHash, merkle, nonce, difficulty);
 
-        DuomenuHashinimas(b.getPrevHash() + b.getMerkleHash() + to_string(b.getTimestamp()) + to_string(b.getNonce()) + b.getVersion() + b.getDifficulty());
+        bHash = DuomenuHashinimas(b.getPrevHash() + b.getMerkleHash() + to_string(b.getTimestamp()) + to_string(nonce) + b.getVersion() + difficulty);
+
+        if(bHash.find_first_not_of("0")>(difficulty[0]-48-1))
+        {
+            b.setHash(bHash);
+            b.setNonce(nonce);
+            b.setDifficulty(difficulty);
+            RastasHashas = true;
+        }
     }
 }

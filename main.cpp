@@ -1,5 +1,6 @@
 #include "user.hpp"
 #include "transaction.hpp"
+#include "blockchain.hpp"
 
 int main()
 {
@@ -16,12 +17,25 @@ int main()
     } */
 
     TransakcijuParinkimas(transactionPool, transactionList, 128); //3 kintamasis nurodo kiek transakciju bus bloke
-    string merkle = MerkleGeneravimas(transactionList);
 
     /* for (int i = 0; i<100; i++)
     {
         cout<<transactionList[i].getId()<<endl;
     } */
+
+    string merkle = MerkleGeneravimas(transactionList);
+
+    Block b("00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048", merkle);
+
+    BlockMining(b);
+
+    cout<<"Mininimas baigtas.\n"<<endl;
+    cout<<"Hashas: "<<b.getHash()<<endl;
+    cout<<"Timestamp: "<<b.getTimestamp()<<endl;
+    cout<<"Nonce: "<<b.getNonce()<<endl;
+    cout<<"Merkle:"<<b.getMerkleHash()<<endl;
+
+    
 
     
 }
