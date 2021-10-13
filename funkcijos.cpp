@@ -1,6 +1,7 @@
 #include "user.hpp"
 #include "Hashas/hash.hpp"
 #include "transaction.hpp"
+#include "blockchain.hpp"
 
 void VartotojuGeneravimas(vector<User> &vartotojai)
 {
@@ -99,4 +100,27 @@ string MerkleGeneravimas(vector<Transaction> transactionList)
     }
 
     return merkle1[0];
+}
+
+string BlockMining(string merkle, string pHash)
+{
+    bool RastasHashas = false;
+    int nonce;
+
+    string bHash;
+
+    string difficulty = "3-0"; //cia galim pakeisti difficulty - pirmas char'as nurodo kiek 0 turi buti is pradziu hash'e
+
+    while(!RastasHashas)
+    {
+        random_device device;
+        mt19937 generator(device());
+        uniform_int_distribution<int> distribution(1,10000000);
+
+        nonce = distribution(generator);
+
+        Block b(pHash, merkle, nonce, difficulty);
+
+        DuomenuHashinimas(b.getPrevHash() + b.getMerkleHash() + to_string(b.getTimestamp()) + to_string(b.getNonce()) + b.getVersion() + b.getDifficulty());
+    }
 }
