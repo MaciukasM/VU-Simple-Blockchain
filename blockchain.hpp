@@ -13,7 +13,7 @@ class Block
         string pHash; //praeito bloko hashas
         string bHash; //pacio blocko hashas
         string mHash; //merkle tree hashas
-        int timestamp;
+        time_t timestamp;
         int nonce = 0;
         string difficulty;
         string version = "v0.1";
@@ -43,15 +43,18 @@ class Block
         string getHash() const { return bHash; }
         string getMerkleHash() const { return mHash; }
         int getNonce() const { return nonce; }
-        int getTimestamp() const { return timestamp; }
+        time_t getTimestamp() const { return timestamp; }
         string getVersion() const { return version; }
         string getDifficulty() const { return difficulty; }
 
         void setHash(string bHash) { this->bHash = bHash; }
         void setNonce(int nonce) { this->nonce = nonce; }
         void setDifficulty(string difficulty) { this->difficulty = difficulty; }
+        void setPrevHash(string pHash) { this->pHash = pHash; }
+        void setMerkleHash(string mHash) { this->mHash = mHash; }
 };
 
 void BlockMining(Block &b);
+void Blockchain();
 
 #endif
