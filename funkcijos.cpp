@@ -134,3 +134,29 @@ void BlockMining(Block &b)
         }
     }
 }
+
+void TransakcijuIvykdymas(vector<Transaction> transactionList, vector<Transaction> &transactionPool, vector<User> &vartotojai)
+{
+    vector<User>::iterator itUser;
+    vector<Transaction>::iterator itTransaction;
+    string pk;
+
+    for (int i = 0; i<transactionList.size(); i++)
+    {
+        pk = transactionList[i].getGavejoPk();
+        itUser = find_if(vartotojai.begin(), vartotojai.end(), [&pk](const User &u) { return u.getPk() == pk; });
+        auto index = distance(vartotojai.begin(), itUser);
+        vartotojai[index].setVal(vartotojai[index].getVal()+transactionList[i].getVal());
+
+        pk = transactionList[i].getSiuntejoPk();
+        itUser = find_if(vartotojai.begin(), vartotojai.end(), [&pk](const User &u) { return u.getPk() == pk; });
+        index = distance(vartotojai.begin(), itUser);
+        vartotojai[index].setVal(vartotojai[index].getVal()-transactionList[i].getVal());
+
+        
+        pk = transactionList[i].getId();
+        itTransaction = find_if(transactionPool.begin(), transactionPool.end(), [&pk](const Transaction &t) { return t.getId() == pk; });
+        transactionPool.erase(itTransaction);
+        //cout<<pk<<" "<<index<<" "<<vartotojai[index].getPk()<<endl;
+    }
+}

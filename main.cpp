@@ -7,6 +7,7 @@ int main()
     vector<User> vartotojai;
     vector<Transaction> transactionPool;
     vector<Transaction> transactionList;
+    vector<Block> blockchain;
 
     VartotojuGeneravimas(vartotojai);
     TransakcijuGeneravimas(vartotojai, transactionPool);
@@ -35,7 +36,9 @@ int main()
     cout<<"Nonce: "<<b.getNonce()<<endl;
     cout<<"Merkle:"<<b.getMerkleHash()<<endl;
 
+    //cout<<"dydis: "<<transactionPool.size()<<endl;
+    TransakcijuIvykdymas(transactionList, transactionPool, vartotojai);
+    //cout<<"dydis: "<<transactionPool.size()<<endl;
     
-
-    
+    blockchain.push_back(b);
 }

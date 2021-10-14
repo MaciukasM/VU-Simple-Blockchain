@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "user.hpp"
+#include <algorithm>
 
 using namespace std;
 
@@ -33,5 +34,6 @@ class Transaction
 void TransakcijuGeneravimas(vector<User> vartotojai, vector<Transaction> &transactionPool);
 void TransakcijuParinkimas(vector<Transaction> transactionPool, vector<Transaction> &transactionList, int n);
 string MerkleGeneravimas(vector<Transaction> transactionList);
+void TransakcijuIvykdymas(vector<Transaction> transactionList, vector<Transaction> &transactionPool, vector<User> &vartotojai);
 
 #endif
