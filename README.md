@@ -7,10 +7,6 @@ First, you need to compile the files:
 ```shell
 g++ -o program main.cpp funkcijos.cpp Hashas/hash.cpp -O2
 ```
-Alternatively, you can use a makefile command:
-```shell
-mingw32-make all
-```
 After that, you can simply run your program:
 ```shell
 .\program.exe 
