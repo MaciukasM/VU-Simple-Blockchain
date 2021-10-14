@@ -29,7 +29,7 @@ Merkle: ef3b4120afa5c61e4366fd3ce7a761bb33da2b77c29d6d01452b03f18751a8af
 
 ------------------------------------------------------
 ```
-This is one example of a mined block. 
+This is one example of a mined block which was added to the blockchain.
 
 Here you can see:
 * The time it took to mine the block;
@@ -39,3 +39,4 @@ Here you can see:
 * The nonce;
 * The merkle tree of all transactions of the block.
 
+The program mines blocks until it runs out of transactions (~10000).
