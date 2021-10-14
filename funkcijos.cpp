@@ -174,6 +174,8 @@ void Blockchain()
 
     string pHash = " ";
 
+    LaikoMatavimas l;
+
     VartotojuGeneravimas(vartotojai);
     TransakcijuGeneravimas(vartotojai, transactionPool);
 
@@ -202,6 +204,7 @@ void Blockchain()
         //b.setPrevHash(pHash);
         //b.setMerkleHash(merkle);
 
+        l.reset();
         BlockMining(b);
 
 
@@ -209,6 +212,7 @@ void Blockchain()
         std::tm* now = std::localtime(&t);
 
         cout<<"Mininimas baigtas.\n"<<endl;
+        cout<<"Mininimas uztruko: "<<l.elapsed()<<" s."<<endl;
         cout<<"Hashas: "<<b.getHash()<<endl;
         cout<<"Timestamp: "<<b.getTimestamp()<<" ("<<(now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-'<<  now->tm_mday<< ' '<<now->tm_hour<< ':'<<now->tm_min<< ':'<<now->tm_sec<<")"<<endl;
         cout<<"Nonce: "<<b.getNonce()<<endl;
