@@ -60,17 +60,32 @@ void TransakcijuGeneravimas(vector<User> vartotojai, vector<Transaction> &transa
     }   
 }
 
-void TransakcijuParinkimas(vector<Transaction> transactionPool, vector<Transaction> &transactionList, int n)
+void TransakcijuParinkimas(vector<Transaction> transactionPool, vector<Transaction> &transactionList, int n, vector<User> vartotojai)
 {
     random_device device;
     mt19937 generator(device());
-    uniform_int_distribution<int> distribution(0, transactionPool.size()-1);
+    
+
+    vector<User>::iterator itUser;
+    string pk;
 
     for(int i = 0; i<n; i++) // n nurodo kiek transakciju bus paimta
     {
+        if(transactionPool.size() < 1) break;
+        uniform_int_distribution<int> distribution(0, transactionPool.size()-1);
         int sk = distribution(generator);
 
-        transactionList.push_back(transactionPool[sk]);
+        pk = transactionPool[sk].getGavejoPk();
+        itUser = find_if(vartotojai.begin(), vartotojai.end(), [&pk](const User &u) { return u.getPk() == pk; });
+        auto index = distance(vartotojai.begin(), itUser);
+
+        if(vartotojai[index].getVal() < transactionPool[sk].getVal())
+        {
+            transactionPool.erase(transactionPool.begin()+sk);
+            --i;
+        } 
+        else transactionList.push_back(transactionPool[sk]);
+        
     }
 }
 
@@ -89,6 +104,7 @@ string MerkleGeneravimas(vector<Transaction> transactionList)
     }
     
     merkle1 = merkle;
+
 
     while(merkle1.size()>1)
     {
@@ -191,7 +207,7 @@ void Blockchain()
         
         if(pHash == " ") pHash = "00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048";
 
-        TransakcijuParinkimas(transactionPool, transactionList, 128); //3 kintamasis nurodo kiek transakciju bus bloke
+        TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai); //3 kintamasis nurodo kiek transakciju bus bloke
 
         /* for (int i = 0; i<100; i++)
         {
@@ -213,6 +229,7 @@ void Blockchain()
 
         cout<<"Mininimas baigtas.\n"<<endl;
         cout<<"Mininimas uztruko: "<<l.elapsed()<<" s."<<endl;
+        cout<<"Difficulty: "<<b.getDifficulty()<<endl;
         cout<<"Hashas: "<<b.getHash()<<endl;
         cout<<"Timestamp: "<<b.getTimestamp()<<" ("<<(now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-'<<  now->tm_mday<< ' '<<now->tm_hour<< ':'<<now->tm_min<< ':'<<now->tm_sec<<")"<<endl;
         cout<<"Nonce: "<<b.getNonce()<<endl;
@@ -221,9 +238,9 @@ void Blockchain()
 
         pHash = b.getHash();
 
-        //cout<<"dydis: "<<transactionPool.size()<<endl;
+        cout<<"dydis: "<<transactionPool.size()<<endl;
         TransakcijuIvykdymas(transactionList, transactionPool, vartotojai);
-        //cout<<"dar liko: "<<transactionPool.size()<<endl;
+        cout<<"dar liko: "<<transactionPool.size()<<endl;
         
         blockchain.push_back(b);
     }
