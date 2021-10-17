@@ -79,7 +79,7 @@ void TransakcijuParinkimas(vector<Transaction> transactionPool, vector<Transacti
         itUser = find_if(vartotojai.begin(), vartotojai.end(), [&pk](const User &u) { return u.getPk() == pk; });
         auto index = distance(vartotojai.begin(), itUser);
 
-        if(vartotojai[index].getVal() < transactionPool[sk].getVal())
+        if(vartotojai[index].getVal() < transactionPool[sk].getVal() || transactionPool[sk].getId() != DuomenuHashinimas(to_string(transactionPool[sk].getVal()) + transactionPool[sk].getSiuntejoPk() + transactionPool[sk].getGavejoPk()))
         {
             transactionPool.erase(transactionPool.begin()+sk);
             --i;
