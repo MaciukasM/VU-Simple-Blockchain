@@ -54,7 +54,24 @@ class Block
         void setMerkleHash(string mHash) { this->mHash = mHash; }
 };
 
-void BlockMining(Block &b);
+class BlockInfo //cia bus saugoma informacija dar neisminintam blokui, kad butu paprasciau padaryti 5 minerius
+{
+    private:
+        vector<Transaction> transactionList;
+        string merkle;
+    public:
+        BlockInfo() {}
+
+        ~BlockInfo() {}
+
+        vector<Transaction> getTransactionList() const { return transactionList;}
+        string getMerkle() const { return merkle; }
+
+        void setTransactionList(vector<Transaction> transactionList) { this->transactionList = transactionList; }
+        void setMerkle(string merkle) { this->merkle = merkle; }
+}; 
+
+void BlockMining(Block &b, bool &RastasHashas);
 void Blockchain(bool mineriai = false);
 
 #endif
