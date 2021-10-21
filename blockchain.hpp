@@ -55,6 +55,6 @@ class Block
 };
 
 void BlockMining(Block &b);
-void Blockchain();
+void Blockchain(bool mineriai = false);
 
 #endif

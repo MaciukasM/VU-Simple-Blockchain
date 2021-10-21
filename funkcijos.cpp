@@ -127,7 +127,7 @@ void BlockMining(Block &b)
 
     string bHash;
 
-    string difficulty = "1-0"; //cia galim pakeisti difficulty - pirmas char'as nurodo kiek 0 turi buti is pradziu hash'e
+    string difficulty = "2-0"; //cia galim pakeisti difficulty - pirmas char'as nurodo kiek 0 turi buti is pradziu hash'e
 
     random_device device;
     mt19937 generator(device());
@@ -184,12 +184,20 @@ void TransakcijuIvykdymas(vector<Transaction> transactionList, vector<Transactio
 }
 
 //pagrindine funkcija
-void Blockchain()
+void Blockchain(bool mineriai)
 {
     vector<User> vartotojai;
     vector<Transaction> transactionPool;
-    vector<Transaction> transactionList;
+    vector<Transaction> transactionList1;
     vector<Block> blockchain;
+
+    if(mineriai)
+    {
+        vector<Transaction> transactionList2;
+        vector<Transaction> transactionList3;
+        vector<Transaction> transactionList4;
+        vector<Transaction> transactionList5;
+    }
 
     string pHash = " ";
 
@@ -211,44 +219,49 @@ void Blockchain()
         
         if(pHash == " ") pHash = "00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048";
 
-        TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai); //3 kintamasis nurodo kiek transakciju bus bloke
+        TransakcijuParinkimas(transactionPool, transactionList1, 128, vartotojai); //3 kintamasis nurodo kiek transakciju bus bloke
 
         /* for (int i = 0; i<100; i++)
         {
             cout<<transactionList[i].getId()<<endl;
         } */
 
-        string merkle = MerkleGeneravimas(transactionList);
+        string merkle = MerkleGeneravimas(transactionList1);
 
-        Block b(pHash, merkle);
+        Block b1(pHash, merkle);
         //b.setPrevHash(pHash);
         //b.setMerkleHash(merkle);
 
+        if(mineriai)
+        {
+            
+        }
+
         l.reset();
-        BlockMining(b);
+        BlockMining(b1);
 
 
-        time_t t = b.getTimestamp();
+        time_t t = b1.getTimestamp();
         std::tm* now = std::localtime(&t);
 
         cout<<"Mininimas baigtas.\n"<<endl;
         cout<<"Mininimas uztruko: "<<l.elapsed()<<" s."<<endl;
         laikas += l.elapsed();
-        cout<<"Difficulty: "<<b.getDifficulty()<<endl;
-        cout<<"Hashas: "<<b.getHash()<<endl;
-        cout<<"Timestamp: "<<b.getTimestamp()<<" ("<<(now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-'<<  now->tm_mday<< ' '<<now->tm_hour<< ':'<<now->tm_min<< ':'<<now->tm_sec<<")"<<endl;
-        cout<<"Nonce: "<<b.getNonce()<<endl;
-        cout<<"Merkle: "<<b.getMerkleHash()<<endl;
+        cout<<"Difficulty: "<<b1.getDifficulty()<<endl;
+        cout<<"Hashas: "<<b1.getHash()<<endl;
+        cout<<"Timestamp: "<<b1.getTimestamp()<<" ("<<(now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-'<<  now->tm_mday<< ' '<<now->tm_hour<< ':'<<now->tm_min<< ':'<<now->tm_sec<<")"<<endl;
+        cout<<"Nonce: "<<b1.getNonce()<<endl;
+        cout<<"Merkle: "<<b1.getMerkleHash()<<endl;
         cout<<"\n------------------------------------------------------"<<endl;
 
-        pHash = b.getHash();
+        pHash = b1.getHash();
 
         //cout<<"dydis: "<<transactionPool.size()<<endl;
-        TransakcijuIvykdymas(transactionList, transactionPool, vartotojai);
+        TransakcijuIvykdymas(transactionList1, transactionPool, vartotojai);
         //cout<<"dar liko: "<<transactionPool.size()<<endl;
 
-        transactionList.clear();
-        blockchain.push_back(b);
+        transactionList1.clear();
+        blockchain.push_back(b1);
     }
     cout<<"Visas laikas: "<<laikas<<endl;
 

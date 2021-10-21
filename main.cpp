@@ -15,7 +15,7 @@ int main()
     } while (ats != 1 && ats != 2);
 
     if(ats == 1) Blockchain();
-    if(ats == 2) Blockchain();
+    if(ats == 2) Blockchain(true);
     
     
 }
