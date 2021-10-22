@@ -372,9 +372,9 @@ void Blockchain(bool mineriai)
 
         pHash = b.getHash();
 
-        cout<<"dydis: "<<transactionPool.size()<<endl;
+        //cout<<"dydis: "<<transactionPool.size()<<endl;
         TransakcijuIvykdymas(transactionList, transactionPool, vartotojai);
-        cout<<"dar liko: "<<transactionPool.size()<<endl;
+        //cout<<"dar liko: "<<transactionPool.size()<<endl;
 
         transactionList.clear();
         blockchain.push_back(b);
