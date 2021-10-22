@@ -126,7 +126,7 @@ bool BlockMining(Block &b, double n)
 
     string bHash;
 
-    string difficulty = "2-0"; //cia galim pakeisti difficulty - pirmas char'as nurodo kiek 0 turi buti is pradziu hash'e
+    string difficulty = "3-0"; //cia galim pakeisti difficulty - pirmas char'as nurodo kiek 0 turi buti is pradziu hash'e
 
     random_device device;
     mt19937 generator(device());
@@ -302,35 +302,35 @@ void Blockchain(bool mineriai)
 
                 l.reset();
 
-                if(BlockMining(b1, 5))
+                if(BlockMining(b1, 6))
                 {
                     b = b1;
                     cout<<"Isminino 1 mineris!\n"<<endl;
                     ArIsminino = true;
                     transactionList = a1.getTransactionList();
                 }
-                else if(BlockMining(b2, 5))
+                else if(BlockMining(b2, 6))
                 {
                     b = b2;
                     cout<<"Isminino 2 mineris!\n"<<endl;
                     ArIsminino = true;
                     transactionList = a2.getTransactionList();
                 }
-                else if(BlockMining(b3, 5))
+                else if(BlockMining(b3, 6))
                 {
                     b = b3;
                     cout<<"Isminino 3 mineris!\n"<<endl;
                     ArIsminino = true;
                     transactionList = a3.getTransactionList();
                 }
-                else if(BlockMining(b4, 5))
+                else if(BlockMining(b4, 6))
                 {
                     b = b4;
                     cout<<"Isminino 4 mineris!\n"<<endl;
                     ArIsminino = true;
                     transactionList = a4.getTransactionList();
                 }
-                else if(BlockMining(b5, 5))
+                else if(BlockMining(b5, 6))
                 {
                     b = b5;
                     cout<<"Isminino 5 mineris!\n"<<endl;
