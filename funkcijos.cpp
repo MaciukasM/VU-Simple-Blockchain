@@ -120,9 +120,8 @@ string MerkleGeneravimas(vector<Transaction> transactionList)
     return merkle1[0];
 }
 
-void BlockMining(Block &b, bool &RastasHashas)
+bool BlockMining(Block &b, double n)
 {
-    
     int nonce;
 
     string bHash;
@@ -135,22 +134,47 @@ void BlockMining(Block &b, bool &RastasHashas)
 
     cout<<"\nPradedamas mininimas...\n"<<endl;
 
-    while(!RastasHashas)
+    if(n == 0)
     {
-        nonce = distribution(generator);
-
-        //Block b(pHash, merkle, nonce, difficulty);
-
-        bHash = DuomenuHashinimas(b.getPrevHash() + b.getMerkleHash() + to_string(b.getTimestamp()) + to_string(nonce) + b.getVersion() + difficulty);
-
-        if(bHash.find_first_not_of("0")>(difficulty[0]-48-1))
+        while(true)
         {
-            b.setHash(bHash);
-            b.setNonce(nonce);
-            b.setDifficulty(difficulty);
-            RastasHashas = true;
+            nonce = distribution(generator);
+
+            //Block b(pHash, merkle, nonce, difficulty);
+
+            bHash = DuomenuHashinimas(b.getPrevHash() + b.getMerkleHash() + to_string(b.getTimestamp()) + to_string(nonce) + b.getVersion() + difficulty);
+
+            if(bHash.find_first_not_of("0")>(difficulty[0]-48-1))
+            {
+                b.setHash(bHash);
+                b.setNonce(nonce);
+                b.setDifficulty(difficulty);
+                return true;
+            }
         }
     }
+    else
+    {
+        LaikoMatavimas l;
+        l.reset();
+
+        while(l.elapsed() < n)
+        {
+            nonce = distribution(generator);
+
+            bHash = DuomenuHashinimas(b.getPrevHash() + b.getMerkleHash() + to_string(b.getTimestamp()) + to_string(nonce) + b.getVersion() + difficulty);
+
+            if(bHash.find_first_not_of("0")>(difficulty[0]-48-1))
+            {
+                b.setHash(bHash);
+                b.setNonce(nonce);
+                b.setDifficulty(difficulty);
+                return true;
+            }
+        }
+        return false;
+    }
+    
 }
 
 void TransakcijuIvykdymas(vector<Transaction> transactionList, vector<Transaction> &transactionPool, vector<User> &vartotojai)
@@ -208,8 +232,11 @@ void Blockchain(bool mineriai)
     //Block b;
     string merkle;
 
+    bool ArIsminino = false; //safety check'as
+
     while(transactionPool.size() > 0)
     {
+        Block b;
         
         if(pHash == " ") pHash = "00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048";
 
@@ -224,57 +251,100 @@ void Blockchain(bool mineriai)
 
             merkle = MerkleGeneravimas(transactionList);
 
-            Block b(pHash, merkle);
+            Block b0(pHash, merkle);
             //b.setPrevHash(pHash);
             //b.setMerkleHash(merkle);
+            b = b0;
 
             l.reset();
-            BlockMining(b, RastasHashas);
+            BlockMining(b);
         }
         else
         {
-            TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
-            merkle = MerkleGeneravimas(transactionList);
-            BlockInfo a1;
-            a1.setMerkle(merkle);
-            a1.setTransactionList(transactionList);
-            Block b1(pHash, a1.getMerkle());
+            ArIsminino = false;
 
-            TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
-            merkle = MerkleGeneravimas(transactionList);
-            BlockInfo a2;
-            a2.setMerkle(merkle);
-            a2.setTransactionList(transactionList);
-            Block b2(pHash, a2.getMerkle());
+            while(!ArIsminino)
+            {
+                TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
+                merkle = MerkleGeneravimas(transactionList);
+                BlockInfo a1;
+                a1.setMerkle(merkle);
+                a1.setTransactionList(transactionList);
+                Block b1(pHash, a1.getMerkle());
 
-            TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
-            merkle = MerkleGeneravimas(transactionList);
-            BlockInfo a3;
-            a3.setMerkle(merkle);
-            a3.setTransactionList(transactionList);
-            Block b1(pHash, a3.getMerkle());
+                TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
+                merkle = MerkleGeneravimas(transactionList);
+                BlockInfo a2;
+                a2.setMerkle(merkle);
+                a2.setTransactionList(transactionList);
+                Block b2(pHash, a2.getMerkle());
 
-            TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
-            merkle = MerkleGeneravimas(transactionList);
-            BlockInfo a4;
-            a4.setMerkle(merkle);
-            a4.setTransactionList(transactionList);
-            Block b4(pHash, a4.getMerkle());
+                TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
+                merkle = MerkleGeneravimas(transactionList);
+                BlockInfo a3;
+                a3.setMerkle(merkle);
+                a3.setTransactionList(transactionList);
+                Block b3(pHash, a3.getMerkle());
 
-            TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
-            merkle = MerkleGeneravimas(transactionList);
-            BlockInfo a5;
-            a5.setMerkle(merkle);
-            a5.setTransactionList(transactionList);
-            Block b5(pHash, a5.getMerkle());
+                TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
+                merkle = MerkleGeneravimas(transactionList);
+                BlockInfo a4;
+                a4.setMerkle(merkle);
+                a4.setTransactionList(transactionList);
+                Block b4(pHash, a4.getMerkle());
 
-            
+                TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
+                merkle = MerkleGeneravimas(transactionList);
+                BlockInfo a5;
+                a5.setMerkle(merkle);
+                a5.setTransactionList(transactionList);
+                Block b5(pHash, a5.getMerkle());
+
+                l.reset();
+
+                if(BlockMining(b1, 5))
+                {
+                    b = b1;
+                    cout<<"Isminino 1 mineris!\n"<<endl;
+                    ArIsminino = true;
+                    transactionList = a1.getTransactionList();
+                }
+                else if(BlockMining(b2, 5))
+                {
+                    b = b2;
+                    cout<<"Isminino 2 mineris!\n"<<endl;
+                    ArIsminino = true;
+                    transactionList = a2.getTransactionList();
+                }
+                else if(BlockMining(b3, 5))
+                {
+                    b = b3;
+                    cout<<"Isminino 3 mineris!\n"<<endl;
+                    ArIsminino = true;
+                    transactionList = a3.getTransactionList();
+                }
+                else if(BlockMining(b4, 5))
+                {
+                    b = b4;
+                    cout<<"Isminino 4 mineris!\n"<<endl;
+                    ArIsminino = true;
+                    transactionList = a4.getTransactionList();
+                }
+                else if(BlockMining(b5, 5))
+                {
+                    b = b5;
+                    cout<<"Isminino 5 mineris!\n"<<endl;
+                    ArIsminino = true;
+                    transactionList = a5.getTransactionList();
+                }
+                else cout<<"Bloko nepavyko ismininti!"<<endl;
+            }
         }
 
         time_t t = b.getTimestamp();
         std::tm* now = std::localtime(&t);
 
-        cout<<"Mininimas baigtas.\n"<<endl;
+        cout<<"Bloko mininimas baigtas.\n"<<endl;
         cout<<"Mininimas uztruko: "<<l.elapsed()<<" s."<<endl;
         laikas += l.elapsed();
         cout<<"Difficulty: "<<b.getDifficulty()<<endl;
@@ -286,9 +356,9 @@ void Blockchain(bool mineriai)
 
         pHash = b.getHash();
 
-        //cout<<"dydis: "<<transactionPool.size()<<endl;
+        cout<<"dydis: "<<transactionPool.size()<<endl;
         TransakcijuIvykdymas(transactionList, transactionPool, vartotojai);
-        //cout<<"dar liko: "<<transactionPool.size()<<endl;
+        cout<<"dar liko: "<<transactionPool.size()<<endl;
 
         transactionList.clear();
         blockchain.push_back(b);

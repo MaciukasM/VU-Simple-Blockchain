@@ -11,6 +11,7 @@ class LaikoMatavimas {
     std::chrono::time_point<Laikas> start;
   public:
     LaikoMatavimas() : start{ Laikas::now() } {}
+    ~LaikoMatavimas() {}
     void reset() {
       start = Laikas::now();
     }

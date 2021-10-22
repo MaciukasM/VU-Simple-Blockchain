@@ -71,7 +71,7 @@ class BlockInfo //cia bus saugoma informacija dar neisminintam blokui, kad butu 
         void setMerkle(string merkle) { this->merkle = merkle; }
 }; 
 
-void BlockMining(Block &b, bool &RastasHashas);
+bool BlockMining(Block &b, double n = 0);
 void Blockchain(bool mineriai = false);
 
 #endif
