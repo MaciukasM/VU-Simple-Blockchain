@@ -20,7 +20,7 @@ void VartotojuGeneravimas(vector<User> &vartotojai)
 
         u.setVardas("Vardas"+to_string(i));
         u.setVal(distribution(generator));
-        u.setPk(DuomenuHashinimas(u.getVardas()+to_string(u.getVal()))); //laikinas private key generavimo sprendimas
+        u.setPk(DuomenuHashinimas(u.getVardas()+to_string(u.getVal())+to_string(distribution(generator)))); //laikinas private key generavimo sprendimas
 
         vartotojai.push_back(u);
     }
@@ -216,6 +216,8 @@ void Blockchain(bool mineriai)
     vector<Block> blockchain;
     bool RastasHashas = false;
 
+    double reward = 5; //pavyzdiniam atvejui
+
     string pHash = " ";
 
     LaikoMatavimas l;
@@ -223,6 +225,10 @@ void Blockchain(bool mineriai)
 
     VartotojuGeneravimas(vartotojai);
     TransakcijuGeneravimas(vartotojai, transactionPool);
+
+    random_device device;
+    mt19937 generator(device());
+    uniform_int_distribution<int> distribution(0, 999);
 
     /* for (int i = 0; i<transactionPool.size(); i++)
     {
@@ -270,6 +276,7 @@ void Blockchain(bool mineriai)
                 BlockInfo a1;
                 a1.setMerkle(merkle);
                 a1.setTransactionList(transactionList);
+                a1.setMineris(distribution(generator));
                 Block b1(pHash, a1.getMerkle());
 
                 TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
@@ -277,6 +284,7 @@ void Blockchain(bool mineriai)
                 BlockInfo a2;
                 a2.setMerkle(merkle);
                 a2.setTransactionList(transactionList);
+                a2.setMineris(distribution(generator));
                 Block b2(pHash, a2.getMerkle());
 
                 TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
@@ -284,6 +292,7 @@ void Blockchain(bool mineriai)
                 BlockInfo a3;
                 a3.setMerkle(merkle);
                 a3.setTransactionList(transactionList);
+                a3.setMineris(distribution(generator));
                 Block b3(pHash, a3.getMerkle());
 
                 TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
@@ -291,6 +300,7 @@ void Blockchain(bool mineriai)
                 BlockInfo a4;
                 a4.setMerkle(merkle);
                 a4.setTransactionList(transactionList);
+                a4.setMineris(distribution(generator));
                 Block b4(pHash, a4.getMerkle());
 
                 TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
@@ -298,6 +308,7 @@ void Blockchain(bool mineriai)
                 BlockInfo a5;
                 a5.setMerkle(merkle);
                 a5.setTransactionList(transactionList);
+                a5.setMineris(distribution(generator));
                 Block b5(pHash, a5.getMerkle());
 
                 l.reset();
@@ -308,6 +319,7 @@ void Blockchain(bool mineriai)
                     cout<<"Isminino 1 mineris!\n"<<endl;
                     ArIsminino = true;
                     transactionList = a1.getTransactionList();
+                    vartotojai[a1.getMineris()].setVal(vartotojai[a1.getMineris()].getVal() + reward);
                 }
                 else if(BlockMining(b2, 6))
                 {
@@ -315,6 +327,7 @@ void Blockchain(bool mineriai)
                     cout<<"Isminino 2 mineris!\n"<<endl;
                     ArIsminino = true;
                     transactionList = a2.getTransactionList();
+                    vartotojai[a2.getMineris()].setVal(vartotojai[a2.getMineris()].getVal() + reward);
                 }
                 else if(BlockMining(b3, 6))
                 {
@@ -322,6 +335,7 @@ void Blockchain(bool mineriai)
                     cout<<"Isminino 3 mineris!\n"<<endl;
                     ArIsminino = true;
                     transactionList = a3.getTransactionList();
+                    vartotojai[a3.getMineris()].setVal(vartotojai[a3.getMineris()].getVal() + reward);
                 }
                 else if(BlockMining(b4, 6))
                 {
@@ -329,6 +343,7 @@ void Blockchain(bool mineriai)
                     cout<<"Isminino 4 mineris!\n"<<endl;
                     ArIsminino = true;
                     transactionList = a4.getTransactionList();
+                    vartotojai[a4.getMineris()].setVal(vartotojai[a4.getMineris()].getVal() + reward);
                 }
                 else if(BlockMining(b5, 6))
                 {
@@ -336,6 +351,7 @@ void Blockchain(bool mineriai)
                     cout<<"Isminino 5 mineris!\n"<<endl;
                     ArIsminino = true;
                     transactionList = a5.getTransactionList();
+                    vartotojai[a5.getMineris()].setVal(vartotojai[a5.getMineris()].getVal() + reward);
                 }
                 else cout<<"Bloko nepavyko ismininti!"<<endl;
             }

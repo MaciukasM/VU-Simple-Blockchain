@@ -59,6 +59,7 @@ class BlockInfo //cia bus saugoma informacija dar neisminintam blokui, kad butu 
     private:
         vector<Transaction> transactionList;
         string merkle;
+        int mineris;
     public:
         BlockInfo() {}
 
@@ -66,9 +67,11 @@ class BlockInfo //cia bus saugoma informacija dar neisminintam blokui, kad butu 
 
         vector<Transaction> getTransactionList() const { return transactionList;}
         string getMerkle() const { return merkle; }
+        int getMineris() const { return mineris; }
 
         void setTransactionList(vector<Transaction> transactionList) { this->transactionList = transactionList; }
         void setMerkle(string merkle) { this->merkle = merkle; }
+        void setMineris(int mineris) { this->mineris = mineris; }
 }; 
 
 bool BlockMining(Block &b, double n = 0);
