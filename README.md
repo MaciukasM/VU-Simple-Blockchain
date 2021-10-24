@@ -13,6 +13,8 @@ Contents:
 * [v0.1](https://github.com/MantasM2001/VU-Simple-Blockchain/releases/tag/v0.1): Initial version of the blockchain. (NOTE! Does not work correctly, see [v0.1.1](https://github.com/MantasM2001/VU-Simple-Blockchain/releases/tag/v0.1.1) for a working first version.)
 * [v0.1.1](https://github.com/MantasM2001/VU-Simple-Blockchain/releases/tag/v0.1.1): Bug fixes, added transaction verification.
 * [v0.2](https://github.com/MantasM2001/VU-Simple-Blockchain/releases/tag/v0.2): Adding support for 5 miners (done sequentially), fixing some bugs.
+* [v0.2.0.1](https://github.com/MantasM2001/VU-Simple-Blockchain/releases/tag/v0.2.0.1): Small changes to the pushing of the blocks on the blockchain.
+* [v0.2.1](https://github.com/MantasM2001/VU-Simple-Blockchain/tree/v0.2.1) (UNRELEASED, not working properly): Trying to initialize mining (the blocks) in parallel.
 
 ## Getting started
 
