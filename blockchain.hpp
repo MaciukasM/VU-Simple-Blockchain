@@ -4,6 +4,7 @@
 #include <iostream>
 #include <ctime>
 #include <string>
+#include "transaction.hpp"
 
 using namespace std;
 
@@ -73,6 +74,25 @@ class BlockInfo //cia bus saugoma informacija dar neisminintam blokui, kad butu 
         void setMerkle(string merkle) { this->merkle = merkle; }
         void setMineris(int mineris) { this->mineris = mineris; }
 }; 
+
+class BlockchainClass
+{
+    private:
+        vector<Block> blockchain;
+        int num = 0;
+    public:
+        BlockchainClass() {}
+        ~BlockchainClass() {}
+
+        vector<Block> getBlockchain() const { return blockchain; }
+        int getNum() const { return num; }
+
+        void PridekBloka(Block b)
+        {
+            blockchain.push_back(b);
+            num++;
+        }
+};
 
 bool BlockMining(Block &b, double n = 0);
 void Blockchain(bool mineriai = false);

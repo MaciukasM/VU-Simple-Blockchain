@@ -213,7 +213,7 @@ void Blockchain(bool mineriai)
     vector<User> vartotojai;
     vector<Transaction> transactionPool;
     vector<Transaction> transactionList;
-    vector<Block> blockchain;
+    BlockchainClass bc;
     bool RastasHashas = false;
 
     double reward = 5; //pavyzdiniam atvejui
@@ -377,7 +377,7 @@ void Blockchain(bool mineriai)
         //cout<<"dar liko: "<<transactionPool.size()<<endl;
 
         transactionList.clear();
-        blockchain.push_back(b);
+        bc.PridekBloka(b);
     }
     cout<<"Visas laikas: "<<laikas<<endl;
 
