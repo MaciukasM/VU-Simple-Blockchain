@@ -5,18 +5,18 @@
 
 //laiko matavimo klase
 class LaikoMatavimas {
-  using Laikas = std::chrono::high_resolution_clock;
-  using durationDouble = std::chrono::duration<double>; 
-  private:
+    using Laikas = std::chrono::high_resolution_clock;
+    using durationDouble = std::chrono::duration<double>;
+private:
     std::chrono::time_point<Laikas> start;
-  public:
+public:
     LaikoMatavimas() : start{ Laikas::now() } {}
     ~LaikoMatavimas() {}
     void reset() {
-      start = Laikas::now();
+        start = Laikas::now();
     }
     double elapsed() const {
-      return durationDouble (Laikas::now() - start).count();
+        return durationDouble(Laikas::now() - start).count();
     }
 };
 //laiko matavimo klase

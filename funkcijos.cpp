@@ -1,53 +1,57 @@
 #include "user.hpp"
-#include "Hashas/hash.hpp"
+#include "hash.hpp"
 #include "transaction.hpp"
 #include "blockchain.hpp"
 #include "laikas.hpp"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <omp.h>
 
-void VartotojuGeneravimas(vector<User> &vartotojai)
+
+void VartotojuGeneravimas(vector<User>& vartotojai)
 {
     int n = 1000; //kiek vartotoju bus
     vartotojai.reserve(n);
 
     random_device device;
     mt19937 generator(device());
-    uniform_int_distribution<int> distribution(100,1000000);
+    uniform_int_distribution<int> distribution(100, 1000000);
 
-    for(int i = 0; i<n; i++)
+    for (int i = 0; i < n; i++)
     {
         User u;
 
-        u.setVardas("Vardas"+to_string(i));
+        u.setVardas("Vardas" + to_string(i));
         u.setVal(distribution(generator));
-        u.setPk(DuomenuHashinimas(u.getVardas()+to_string(u.getVal())+to_string(distribution(generator)))); //laikinas private key generavimo sprendimas
+        u.setPk(DuomenuHashinimas(u.getVardas() + to_string(u.getVal()) + to_string(distribution(generator)))); //laikinas private key generavimo sprendimas
 
         vartotojai.push_back(u);
     }
 }
 
-void TransakcijuGeneravimas(vector<User> vartotojai, vector<Transaction> &transactionPool)
+void TransakcijuGeneravimas(vector<User> vartotojai, vector<Transaction>& transactionPool)
 {
     int n = 10000;
     transactionPool.reserve(n);
 
     random_device device;
     mt19937 generator(device());
-    uniform_int_distribution<int> distribution(0, 1000-1);
+    uniform_int_distribution<int> distribution(0, 1000 - 1);
 
     int u1; //user 1 (siuntejas)
     int u2; //user 2 (gavejas)
 
-    while(transactionPool.size()!=transactionPool.capacity())
+    while (transactionPool.size() != transactionPool.capacity())
     {
         Transaction t;
 
         u1 = distribution(generator);
         u2 = distribution(generator);
 
-        if(u1 != u2)
+        if (u1 != u2)
         {
-            uniform_real_distribution<float> distributionF(1, (vartotojai[u1].getVal()/5)); //kol kas vartotojai atsakingi ir neisleidzia daugiau nei penktadalio valiutos :)
+            uniform_real_distribution<float> distributionF(1, (vartotojai[u1].getVal() / 5)); //kol kas vartotojai atsakingi ir neisleidzia daugiau nei penktadalio valiutos :)
 
             t.setVal(distributionF(generator));
             t.setSiuntejoPk(vartotojai[u1].getPk());
@@ -57,35 +61,35 @@ void TransakcijuGeneravimas(vector<User> vartotojai, vector<Transaction> &transa
 
             transactionPool.push_back(t);
         }
-    }   
+    }
 }
 
-void TransakcijuParinkimas(vector<Transaction> &transactionPool, vector<Transaction> &transactionList, int n, vector<User> vartotojai)
+void TransakcijuParinkimas(vector<Transaction>& transactionPool, vector<Transaction>& transactionList, int n, vector<User> vartotojai)
 {
     random_device device;
     mt19937 generator(device());
-    
+
 
     vector<User>::iterator itUser;
     string pk;
 
-    for(int i = 0; i<n; i++) // n nurodo kiek transakciju bus paimta
+    for (int i = 0; i < n; i++) // n nurodo kiek transakciju bus paimta
     {
-        if(transactionPool.size() == transactionList.size()) break;
-        uniform_int_distribution<int> distribution(0, transactionPool.size()-1);
+        if (transactionPool.size() == transactionList.size()) break;
+        uniform_int_distribution<int> distribution(0, transactionPool.size() - 1);
         int sk = distribution(generator);
 
         pk = transactionPool[sk].getGavejoPk();
-        itUser = find_if(vartotojai.begin(), vartotojai.end(), [&pk](const User &u) { return u.getPk() == pk; });
+        itUser = find_if(vartotojai.begin(), vartotojai.end(), [&pk](const User& u) { return u.getPk() == pk; });
         auto index = distance(vartotojai.begin(), itUser);
 
-        if(vartotojai[index].getVal() < transactionPool[sk].getVal() || transactionPool[sk].getId() != DuomenuHashinimas(to_string(transactionPool[sk].getVal()) + transactionPool[sk].getSiuntejoPk() + transactionPool[sk].getGavejoPk()))
+        if (vartotojai[index].getVal() < transactionPool[sk].getVal() || transactionPool[sk].getId() != DuomenuHashinimas(to_string(transactionPool[sk].getVal()) + transactionPool[sk].getSiuntejoPk() + transactionPool[sk].getGavejoPk()))
         {
-            transactionPool.erase(transactionPool.begin()+sk);
+            transactionPool.erase(transactionPool.begin() + sk);
             --i;
-        } 
+        }
         else transactionList.push_back(transactionPool[sk]);
-        
+
     }
 }
 
@@ -95,24 +99,24 @@ string MerkleGeneravimas(vector<Transaction> transactionList)
     vector<string> merkle1; //kopija
 
     // pirma patikrinam ar is viso daugiau nei 1 transactionas yra
-    if(transactionList.size() == 0) return DuomenuHashinimas("");
-    if(transactionList.size() == 1) return DuomenuHashinimas(transactionList[0].getId()); 
+    if (transactionList.size() == 0) return DuomenuHashinimas("");
+    if (transactionList.size() == 1) return DuomenuHashinimas(transactionList[0].getId());
 
-    for (int i = 0; i<transactionList.size(); i++)
+    for (int i = 0; i < transactionList.size(); i++)
     {
         merkle.push_back(transactionList[i].getId());
     }
-    
+
     merkle1 = merkle;
 
 
-    while(merkle1.size()>1)
+    while (merkle1.size() > 1)
     {
         merkle.clear();
 
-        if(merkle1.size() % 2 != 0) merkle1.push_back(merkle1.back());
+        if (merkle1.size() % 2 != 0) merkle1.push_back(merkle1.back());
 
-        for(int i = 0; i<merkle1.size(); i = i + 2) merkle.push_back(DuomenuHashinimas(merkle1[i]+merkle1[i+1]));
+        for (int i = 0; i < merkle1.size(); i = i + 2) merkle.push_back(DuomenuHashinimas(merkle1[i] + merkle1[i + 1]));
 
         merkle1 = merkle;
     }
@@ -120,23 +124,21 @@ string MerkleGeneravimas(vector<Transaction> transactionList)
     return merkle1[0];
 }
 
-bool BlockMining(Block &b, double n)
+bool BlockMining(Block& b, double n)
 {
     int nonce;
 
     string bHash;
 
-    string difficulty = "3-0"; //cia galim pakeisti difficulty - pirmas char'as nurodo kiek 0 turi buti is pradziu hash'e
+    string difficulty = "2-0"; //cia galim pakeisti difficulty - pirmas char'as nurodo kiek 0 turi buti is pradziu hash'e
 
     random_device device;
     mt19937 generator(device());
-    uniform_int_distribution<int> distribution(1,100000000);
+    uniform_int_distribution<int> distribution(1, 100000000);
 
-    cout<<"\nPradedamas mininimas...\n"<<endl;
-
-    if(n == 0)
+    if (n == 0)
     {
-        while(true)
+        while (true)
         {
             nonce = distribution(generator);
 
@@ -144,7 +146,7 @@ bool BlockMining(Block &b, double n)
 
             bHash = DuomenuHashinimas(b.getPrevHash() + b.getMerkleHash() + to_string(b.getTimestamp()) + to_string(nonce) + b.getVersion() + difficulty);
 
-            if(bHash.find_first_not_of("0")>(difficulty[0]-48-1))
+            if (bHash.find_first_not_of("0") > (difficulty[0] - 48 - 1))
             {
                 b.setHash(bHash);
                 b.setNonce(nonce);
@@ -158,13 +160,13 @@ bool BlockMining(Block &b, double n)
         LaikoMatavimas l;
         l.reset();
 
-        while(l.elapsed() < n)
+        while (l.elapsed() < n)
         {
             nonce = distribution(generator);
 
             bHash = DuomenuHashinimas(b.getPrevHash() + b.getMerkleHash() + to_string(b.getTimestamp()) + to_string(nonce) + b.getVersion() + difficulty);
 
-            if(bHash.find_first_not_of("0")>(difficulty[0]-48-1))
+            if (bHash.find_first_not_of("0") > (difficulty[0] - 48 - 1))
             {
                 b.setHash(bHash);
                 b.setNonce(nonce);
@@ -174,10 +176,10 @@ bool BlockMining(Block &b, double n)
         }
         return false;
     }
-    
+
 }
 
-void TransakcijuIvykdymas(vector<Transaction> transactionList, vector<Transaction> &transactionPool, vector<User> &vartotojai)
+void TransakcijuIvykdymas(vector<Transaction> transactionList, vector<Transaction>& transactionPool, vector<User>& vartotojai)
 {
     vector<User>::iterator itUser;
     vector<Transaction>::iterator itTransaction;
@@ -186,21 +188,21 @@ void TransakcijuIvykdymas(vector<Transaction> transactionList, vector<Transactio
     //cout<<"a:"<<transactionList.size()<<endl;
     //cout<<"pool:"<<transactionPool.size()<<endl;
 
-    for (int i = 0; i<transactionList.size(); i++)
+    for (int i = 0; i < transactionList.size(); i++)
     {
         pk = transactionList[i].getGavejoPk();
-        itUser = find_if(vartotojai.begin(), vartotojai.end(), [&pk](const User &u) { return u.getPk() == pk; });
+        itUser = find_if(vartotojai.begin(), vartotojai.end(), [&pk](const User& u) { return u.getPk() == pk; });
         auto index = distance(vartotojai.begin(), itUser);
-        vartotojai[index].setVal(vartotojai[index].getVal()+transactionList[i].getVal());
+        vartotojai[index].setVal(vartotojai[index].getVal() + transactionList[i].getVal());
 
         pk = transactionList[i].getSiuntejoPk();
-        itUser = find_if(vartotojai.begin(), vartotojai.end(), [&pk](const User &u) { return u.getPk() == pk; });
+        itUser = find_if(vartotojai.begin(), vartotojai.end(), [&pk](const User& u) { return u.getPk() == pk; });
         index = distance(vartotojai.begin(), itUser);
-        vartotojai[index].setVal(vartotojai[index].getVal()-transactionList[i].getVal());
+        vartotojai[index].setVal(vartotojai[index].getVal() - transactionList[i].getVal());
 
-        
+
         pk = transactionList[i].getId();
-        itTransaction = find_if(transactionPool.begin(), transactionPool.end(), [&pk](const Transaction &t) { return t.getId() == pk; });
+        itTransaction = find_if(transactionPool.begin(), transactionPool.end(), [&pk](const Transaction& t) { return t.getId() == pk; });
         transactionPool.erase(itTransaction);
         //cout<<pk<<" "<<index<<" "<<vartotojai[index].getPk()<<endl;
     }
@@ -240,13 +242,13 @@ void Blockchain(bool mineriai)
 
     bool ArIsminino = false; //safety check'as
 
-    while(transactionPool.size() > 0)
+    while (transactionPool.size() > 0)
     {
         Block b;
-        
-        if(pHash == " ") pHash = "00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048";
 
-        if(!mineriai)
+        if (pHash == " ") pHash = "00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048";
+
+        if (!mineriai)
         {
             TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai); //3 kintamasis nurodo kiek transakciju bus bloke
 
@@ -268,8 +270,9 @@ void Blockchain(bool mineriai)
         else
         {
             ArIsminino = false;
+            cout << "\nPradedamas mininimas...\n" << endl;
 
-            while(!ArIsminino)
+            while (!ArIsminino)
             {
                 TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
                 merkle = MerkleGeneravimas(transactionList);
@@ -312,63 +315,70 @@ void Blockchain(bool mineriai)
                 Block b5(pHash, a5.getMerkle());
 
                 l.reset();
-
-                if(BlockMining(b1, 6))
+                #pragma omp parallel sections
                 {
-                    b = b1;
-                    cout<<"Isminino 1 mineris!\n"<<endl;
-                    ArIsminino = true;
-                    transactionList = a1.getTransactionList();
-                    vartotojai[a1.getMineris()].setVal(vartotojai[a1.getMineris()].getVal() + reward);
+                    {if (BlockMining(b1, 6) && !ArIsminino)
+                    {
+                        b = b1;
+                        cout << "Isminino 1 mineris!\n" << endl;
+                        ArIsminino = true;
+                        transactionList = a1.getTransactionList();
+                        vartotojai[a1.getMineris()].setVal(vartotojai[a1.getMineris()].getVal() + reward);
+                    }}
+                    #pragma omp section
+                    {if (BlockMining(b2, 6) && !ArIsminino)
+                    {
+                        b = b2;
+                        cout << "Isminino 2 mineris!\n" << endl;
+                        ArIsminino = true;
+                        transactionList = a2.getTransactionList();
+                        vartotojai[a2.getMineris()].setVal(vartotojai[a2.getMineris()].getVal() + reward);
+                    }}
+                    #pragma omp section
+                    {if (BlockMining(b3, 6) && !ArIsminino)
+                    {
+                        b = b3;
+                        cout << "Isminino 3 mineris!\n" << endl;
+                        ArIsminino = true;
+                        transactionList = a3.getTransactionList();
+                        vartotojai[a3.getMineris()].setVal(vartotojai[a3.getMineris()].getVal() + reward);
+                    }}
+                    #pragma omp section
+                    {if (BlockMining(b4, 6) && !ArIsminino)
+                    {
+                        b = b4;
+                        cout << "Isminino 4 mineris!\n" << endl;
+                        ArIsminino = true;
+                        transactionList = a4.getTransactionList();
+                        vartotojai[a4.getMineris()].setVal(vartotojai[a4.getMineris()].getVal() + reward);
+                    }}
+                    #pragma omp section
+                    {if (BlockMining(b5, 6) && !ArIsminino)
+                    {
+                        b = b5;
+                        cout << "Isminino 5 mineris!\n" << endl;
+                        ArIsminino = true;
+                        transactionList = a5.getTransactionList();
+                        vartotojai[a5.getMineris()].setVal(vartotojai[a5.getMineris()].getVal() + reward);
+                    }}
+                    
                 }
-                else if(BlockMining(b2, 6))
-                {
-                    b = b2;
-                    cout<<"Isminino 2 mineris!\n"<<endl;
-                    ArIsminino = true;
-                    transactionList = a2.getTransactionList();
-                    vartotojai[a2.getMineris()].setVal(vartotojai[a2.getMineris()].getVal() + reward);
-                }
-                else if(BlockMining(b3, 6))
-                {
-                    b = b3;
-                    cout<<"Isminino 3 mineris!\n"<<endl;
-                    ArIsminino = true;
-                    transactionList = a3.getTransactionList();
-                    vartotojai[a3.getMineris()].setVal(vartotojai[a3.getMineris()].getVal() + reward);
-                }
-                else if(BlockMining(b4, 6))
-                {
-                    b = b4;
-                    cout<<"Isminino 4 mineris!\n"<<endl;
-                    ArIsminino = true;
-                    transactionList = a4.getTransactionList();
-                    vartotojai[a4.getMineris()].setVal(vartotojai[a4.getMineris()].getVal() + reward);
-                }
-                else if(BlockMining(b5, 6))
-                {
-                    b = b5;
-                    cout<<"Isminino 5 mineris!\n"<<endl;
-                    ArIsminino = true;
-                    transactionList = a5.getTransactionList();
-                    vartotojai[a5.getMineris()].setVal(vartotojai[a5.getMineris()].getVal() + reward);
-                }
-                else cout<<"Bloko nepavyko ismininti!"<<endl;
+                
             }
         }
 
         time_t t = b.getTimestamp();
         std::tm* now = std::localtime(&t);
 
-        cout<<"Bloko mininimas baigtas.\n"<<endl;
-        cout<<"Mininimas uztruko: "<<l.elapsed()<<" s."<<endl;
+        cout << "Bloko mininimas baigtas.\n" << endl;
+        cout << "Mininimas uztruko: " << l.elapsed() << " s." << endl;
         laikas += l.elapsed();
-        cout<<"Difficulty: "<<b.getDifficulty()<<endl;
-        cout<<"Hashas: "<<b.getHash()<<endl;
-        cout<<"Timestamp: "<<b.getTimestamp()<<" ("<<(now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-'<<  now->tm_mday<< ' '<<now->tm_hour<< ':'<<now->tm_min<< ':'<<now->tm_sec<<")"<<endl;
-        cout<<"Nonce: "<<b.getNonce()<<endl;
-        cout<<"Merkle: "<<b.getMerkleHash()<<endl;
-        cout<<"\n------------------------------------------------------"<<endl;
+        cout << "Difficulty: " << b.getDifficulty() << endl;
+        cout << "Hashas: " << b.getHash() << endl;
+        cout << "Timestamp: " << b.getTimestamp() << " (" << (now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-' << now->tm_mday << ' ' << now->tm_hour << ':' << now->tm_min << ':' << now->tm_sec << ")" << endl;
+        cout << "Nonce: " << b.getNonce() << endl;
+        cout << "Merkle: " << b.getMerkleHash() << endl;
+        cout << "\n------------------------------------------------------" << endl;
 
         pHash = b.getHash();
 
@@ -379,6 +389,6 @@ void Blockchain(bool mineriai)
         transactionList.clear();
         bc.PridekBloka(b);
     }
-    cout<<"Visas laikas: "<<laikas<<endl;
+    cout << "Visas laikas: " << laikas << endl;
 
 }

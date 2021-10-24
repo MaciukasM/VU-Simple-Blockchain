@@ -8,13 +8,13 @@
 using namespace std;
 
 class User {
-  private:
+private:
     string vardas;
     string pk;
     double val;
-  public:
-    User () {}
-    ~User () {}
+public:
+    User() {}
+    ~User() {}
 
     void setVardas(string vardas) { this->vardas = vardas; }
     string getVardas() const { return vardas; }
@@ -26,6 +26,6 @@ class User {
     double getVal() const { return val; }
 };
 
-void VartotojuGeneravimas(vector<User> &vartotojai);
+void VartotojuGeneravimas(vector<User>& vartotojai);
 
 #endif
