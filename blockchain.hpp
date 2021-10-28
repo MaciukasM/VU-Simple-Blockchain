@@ -17,7 +17,7 @@ private:
     time_t timestamp;
     int nonce = 0;
     string difficulty;
-    string version = "v0.1";
+    string version = "v0.2";
 public:
     Block() {}
     Block(string pHash, string mHash)

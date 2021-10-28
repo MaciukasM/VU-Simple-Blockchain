@@ -1,5 +1,5 @@
 #include "user.hpp"
-#include "hash.hpp"
+#include "Hashas/hash.hpp"
 #include "transaction.hpp"
 #include "blockchain.hpp"
 #include "laikas.hpp"
@@ -130,7 +130,7 @@ bool BlockMining(Block& b, double n)
 
     string bHash;
 
-    string difficulty = "2-0"; //cia galim pakeisti difficulty - pirmas char'as nurodo kiek 0 turi buti is pradziu hash'e
+    string difficulty = "3-0"; //cia galim pakeisti difficulty - pirmas char'as nurodo kiek 0 turi buti is pradziu hash'e
 
     random_device device;
     mt19937 generator(device());
@@ -224,6 +224,7 @@ void Blockchain(bool mineriai)
 
     LaikoMatavimas l;
     double laikas = 0;
+    double blokoLaikas = 0;
 
     VartotojuGeneravimas(vartotojai);
     TransakcijuGeneravimas(vartotojai, transactionPool);
@@ -271,6 +272,7 @@ void Blockchain(bool mineriai)
         {
             ArIsminino = false;
             cout << "\nPradedamas mininimas...\n" << endl;
+            l.reset();
 
             while (!ArIsminino)
             {
@@ -314,52 +316,56 @@ void Blockchain(bool mineriai)
                 a5.setMineris(distribution(generator));
                 Block b5(pHash, a5.getMerkle());
 
-                l.reset();
                 #pragma omp parallel sections
                 {
-                    {if (BlockMining(b1, 6) && !ArIsminino)
+                    {if (BlockMining(b1, 1) && !ArIsminino)
                     {
                         b = b1;
                         cout << "Isminino 1 mineris!\n" << endl;
                         ArIsminino = true;
                         transactionList = a1.getTransactionList();
                         vartotojai[a1.getMineris()].setVal(vartotojai[a1.getMineris()].getVal() + reward);
+                        blokoLaikas = l.elapsed();
                     }}
                     #pragma omp section
-                    {if (BlockMining(b2, 6) && !ArIsminino)
+                    {if (BlockMining(b2, 1) && !ArIsminino)
                     {
                         b = b2;
                         cout << "Isminino 2 mineris!\n" << endl;
                         ArIsminino = true;
                         transactionList = a2.getTransactionList();
                         vartotojai[a2.getMineris()].setVal(vartotojai[a2.getMineris()].getVal() + reward);
+                        blokoLaikas = l.elapsed();
                     }}
                     #pragma omp section
-                    {if (BlockMining(b3, 6) && !ArIsminino)
+                    {if (BlockMining(b3, 1) && !ArIsminino)
                     {
                         b = b3;
                         cout << "Isminino 3 mineris!\n" << endl;
                         ArIsminino = true;
                         transactionList = a3.getTransactionList();
                         vartotojai[a3.getMineris()].setVal(vartotojai[a3.getMineris()].getVal() + reward);
+                        blokoLaikas = l.elapsed();
                     }}
                     #pragma omp section
-                    {if (BlockMining(b4, 6) && !ArIsminino)
+                    {if (BlockMining(b4, 1) && !ArIsminino)
                     {
                         b = b4;
                         cout << "Isminino 4 mineris!\n" << endl;
                         ArIsminino = true;
                         transactionList = a4.getTransactionList();
                         vartotojai[a4.getMineris()].setVal(vartotojai[a4.getMineris()].getVal() + reward);
+                        blokoLaikas = l.elapsed();
                     }}
                     #pragma omp section
-                    {if (BlockMining(b5, 6) && !ArIsminino)
+                    {if (BlockMining(b5, 1) && !ArIsminino)
                     {
                         b = b5;
                         cout << "Isminino 5 mineris!\n" << endl;
                         ArIsminino = true;
                         transactionList = a5.getTransactionList();
                         vartotojai[a5.getMineris()].setVal(vartotojai[a5.getMineris()].getVal() + reward);
+                        blokoLaikas = l.elapsed();
                     }}
                     
                 }
@@ -371,8 +377,8 @@ void Blockchain(bool mineriai)
         std::tm* now = std::localtime(&t);
 
         cout << "Bloko mininimas baigtas.\n" << endl;
-        cout << "Mininimas uztruko: " << l.elapsed() << " s." << endl;
-        laikas += l.elapsed();
+        cout << "Mininimas uztruko: " << blokoLaikas << " s." << endl;
+        laikas += blokoLaikas;
         cout << "Difficulty: " << b.getDifficulty() << endl;
         cout << "Hashas: " << b.getHash() << endl;
         cout << "Timestamp: " << b.getTimestamp() << " (" << (now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-' << now->tm_mday << ' ' << now->tm_hour << ':' << now->tm_min << ':' << now->tm_sec << ")" << endl;
