@@ -7,7 +7,7 @@ int main()
     int ats = 0;
     do
     {
-        cout << "\n1 - Blockchain'as su 1 miner'iu (v0.1) (šioje versijoje (lygiagretaus mining'o) 1 miner-io funkcija neveikia!)" << endl;
+        cout << "\n1 - Blockchain'as su 1 miner'iu (v0.1) (sioje versijoje (lygiagretaus mining'o) 1 miner-io funkcija neveikia!)" << endl;
         cout << "2 - Blockchain'as su 5 miner'iais (v0.2)\n" << endl;
         cout << "Iveskite savo pasirinkima: ";
         cin >> ats;

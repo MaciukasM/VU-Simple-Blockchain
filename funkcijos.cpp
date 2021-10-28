@@ -1,5 +1,5 @@
 #include "user.hpp"
-#include "Hashas/hash.hpp"
+#include "hash.hpp"
 #include "transaction.hpp"
 #include "blockchain.hpp"
 #include "laikas.hpp"
@@ -130,7 +130,7 @@ bool BlockMining(Block& b, double n)
 
     string bHash;
 
-    string difficulty = "3-0"; //cia galim pakeisti difficulty - pirmas char'as nurodo kiek 0 turi buti is pradziu hash'e
+    string difficulty = "2-0"; //cia galim pakeisti difficulty - pirmas char'as nurodo kiek 0 turi buti is pradziu hash'e
 
     random_device device;
     mt19937 generator(device());
@@ -164,7 +164,7 @@ bool BlockMining(Block& b, double n)
         {
             nonce = distribution(generator);
 
-            bHash = DuomenuHashinimas(b.getPrevHash() + b.getMerkleHash() + to_string(b.getTimestamp()) + to_string(nonce) + b.getVersion() + difficulty);
+            bHash = DuomenuHashinimas(to_string(nonce) + to_string(b.getTimestamp()) + b.getPrevHash() + b.getMerkleHash() + b.getVersion() + difficulty);
 
             if (bHash.find_first_not_of("0") > (difficulty[0] - 48 - 1))
             {
@@ -276,6 +276,7 @@ void Blockchain(bool mineriai)
 
             while (!ArIsminino)
             {
+                transactionList.clear();
                 TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
                 merkle = MerkleGeneravimas(transactionList);
                 BlockInfo a1;
@@ -284,6 +285,7 @@ void Blockchain(bool mineriai)
                 a1.setMineris(distribution(generator));
                 Block b1(pHash, a1.getMerkle());
 
+                transactionList.clear();
                 TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
                 merkle = MerkleGeneravimas(transactionList);
                 BlockInfo a2;
@@ -292,6 +294,7 @@ void Blockchain(bool mineriai)
                 a2.setMineris(distribution(generator));
                 Block b2(pHash, a2.getMerkle());
 
+                transactionList.clear();
                 TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
                 merkle = MerkleGeneravimas(transactionList);
                 BlockInfo a3;
@@ -300,6 +303,7 @@ void Blockchain(bool mineriai)
                 a3.setMineris(distribution(generator));
                 Block b3(pHash, a3.getMerkle());
 
+                transactionList.clear();
                 TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
                 merkle = MerkleGeneravimas(transactionList);
                 BlockInfo a4;
@@ -308,6 +312,7 @@ void Blockchain(bool mineriai)
                 a4.setMineris(distribution(generator));
                 Block b4(pHash, a4.getMerkle());
 
+                transactionList.clear();
                 TransakcijuParinkimas(transactionPool, transactionList, 128, vartotojai);
                 merkle = MerkleGeneravimas(transactionList);
                 BlockInfo a5;
@@ -384,6 +389,9 @@ void Blockchain(bool mineriai)
         cout << "Timestamp: " << b.getTimestamp() << " (" << (now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-' << now->tm_mday << ' ' << now->tm_hour << ':' << now->tm_min << ':' << now->tm_sec << ")" << endl;
         cout << "Nonce: " << b.getNonce() << endl;
         cout << "Merkle: " << b.getMerkleHash() << endl;
+        cout << "Transakciju kiekis: " << transactionList.size() << endl;
+        cout << "Versija: " << b.getVersion() << endl;
+        cout << "Praeito bloko hashas: " << b.getPrevHash() << endl;
         cout << "\n------------------------------------------------------" << endl;
 
         pHash = b.getHash();
